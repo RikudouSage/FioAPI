@@ -102,7 +102,7 @@ func (receiver *client) request[TResult any](
 	defer DrainBody(resp.Body)
 
 	if resp.StatusCode < minSuccessfulStatusCode || resp.StatusCode > maxSuccessfulStatusCode {
-		if resp.StatusCode == http.StatusTooManyRequests {
+		if resp.StatusCode == http.StatusConflict {
 			return result, ErrTooSoon
 		}
 
