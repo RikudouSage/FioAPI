@@ -83,3 +83,52 @@ func TestAccountInfoAndTransactionsReturnsRequestError(t *testing.T) {
 		t.Errorf("transactions = %#v, want nil", transactions)
 	}
 }
+
+func TestAccountInfoAndTransactionsByDateReturnsAccountInfoAndTransactions(t *testing.T) {
+	client, _ := newTestClient(t, func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodGet {
+			t.Errorf("method = %q, want GET", r.Method)
+		}
+		if want := "/periods/test-token/2025-01-02/2025-01-31/transactions.json"; r.URL.Path != want {
+			t.Errorf("path = %q, want %q", r.URL.Path, want)
+		}
+		_, _ = io.WriteString(w, `{"accountStatement":{`+
+			`"info":{"accountId":"1234567890","currency":"CZK"},`+
+			`"transactionList":{"transaction":[{`+
+			`"column22":{"value":42},"column1":{"value":"12.50"},`+
+			`"column14":{"value":"CZK"}}]}}}`)
+	})
+
+	start := time.Date(2025, 1, 2, 23, 0, 0, 0, time.FixedZone("test", -5*60*60))
+	end := time.Date(2025, 1, 31, 1, 0, 0, 0, time.UTC)
+	info, transactions, err := client.AccountInfoAndTransactionsByDate(context.Background(), start, end)
+	if err != nil {
+		t.Fatalf("AccountInfoAndTransactionsByDate() error = %v", err)
+	}
+	if info.AccountID != "1234567890" || info.Currency != "CZK" {
+		t.Errorf("account info = %#v, want account 1234567890 in CZK", info)
+	}
+	if len(transactions) != 1 {
+		t.Fatalf("got %d transactions, want 1", len(transactions))
+	}
+	if got := transactions[0]; got.ID.Value != 42 || got.Amount.Value.String() != "12.5" || got.Currency.Value != "CZK" {
+		t.Errorf("transaction = %#v, want ID 42, amount 12.5 CZK", got)
+	}
+}
+
+func TestAccountInfoAndTransactionsByDateReturnsRequestError(t *testing.T) {
+	client, _ := newTestClient(t, func(w http.ResponseWriter, _ *http.Request) {
+		http.Error(w, "unavailable", http.StatusServiceUnavailable)
+	})
+
+	info, transactions, err := client.AccountInfoAndTransactionsByDate(context.Background(), time.Now(), time.Now())
+	if err == nil || !strings.Contains(err.Error(), "503 Service Unavailable") {
+		t.Fatalf("error = %v, want service-unavailable error", err)
+	}
+	if info.AccountID != "" {
+		t.Errorf("account info = %#v, want zero value", info)
+	}
+	if transactions != nil {
+		t.Errorf("transactions = %#v, want nil", transactions)
+	}
+}

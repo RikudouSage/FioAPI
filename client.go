@@ -34,6 +34,9 @@ type Client interface {
 	// AccountInfoAndTransactions returns account metadata and transactions added
 	// since the token's last successful download.
 	AccountInfoAndTransactions(ctx context.Context) (dto.AccountInfo, []dto.Transaction, error)
+	// AccountInfoAndTransactionsByDate returns account metadata and transactions
+	// booked in the inclusive date range from startDate through endDate.
+	AccountInfoAndTransactionsByDate(ctx context.Context, startDate time.Time, endDate time.Time) (dto.AccountInfo, []dto.Transaction, error)
 
 	// SetLastTransactionID sets the transaction from which the next
 	// TransactionsSinceLastPull request continues.
