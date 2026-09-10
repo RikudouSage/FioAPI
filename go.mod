@@ -1,0 +1,10 @@
+module go.chrastecky.dev/fio-api/fio
+
+go 1.27
+
+require (
+	github.com/samber/lo v1.53.0
+	github.com/shopspring/decimal v1.4.0
+)
+
+require golang.org/x/text v0.22.0 // indirect
