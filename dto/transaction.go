@@ -7,7 +7,7 @@ import (
 
 type Transaction struct {
 	ID                   TransactionValue[int64]           `json:"column22"`
-	Date                 TransactionValue[FioDate]         `json:"column0"`
+	Date                 TransactionValue[TimezonedDate]   `json:"column0"`
 	Amount               TransactionValue[decimal.Decimal] `json:"column1"`
 	Currency             TransactionValue[string]          `json:"column14"`
 	CounterpartyAccount  TransactionValue[string]          `json:"column2"`

@@ -23,6 +23,8 @@ type Client interface {
 
 	SetLastTransactionID(ctx context.Context, id int64) error
 	SetLastFailedTransactionDate(ctx context.Context, date time.Time) error
+
+	IssueDomesticTransactions(ctx context.Context, transaction dto.DomesticTransaction) error
 }
 
 type client struct {
@@ -54,6 +56,7 @@ func (receiver *client) request[TResult any](
 	method string,
 	path string,
 	body any,
+	options ...httpOption,
 ) (TResult, error) {
 	var result TResult
 
@@ -85,6 +88,13 @@ func (receiver *client) request[TResult any](
 		return result, fmt.Errorf("failed creating request: %w", err)
 	}
 
+	customOptions := &httpOptions{}
+	for _, option := range options {
+		if err := option(req, customOptions); err != nil {
+			return result, fmt.Errorf("failed applying option: %w", err)
+		}
+	}
+
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return result, fmt.Errorf("failed sending request: %w", err)
@@ -108,8 +118,21 @@ func (receiver *client) request[TResult any](
 		return result, errors.New(errMsg)
 	}
 
-	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil && !errors.Is(err, io.EOF) {
-		return result, fmt.Errorf("failed parsing response: %w", err)
+	if decoder := customOptions.responseDecoder; decoder != nil {
+		tempResult, err := decoder(resp.Body)
+		if err != nil {
+			return result, fmt.Errorf("failed decoding response using custom parser: %w", err)
+		}
+
+		if typed, ok := tempResult.(TResult); !ok {
+			return result, fmt.Errorf("failed decoding response using custom parser: expected TResult but got %T", tempResult)
+		} else {
+			result = typed
+		}
+	} else {
+		if err := json.NewDecoder(resp.Body).Decode(&result); err != nil && !errors.Is(err, io.EOF) {
+			return result, fmt.Errorf("failed parsing response: %w", err)
+		}
 	}
 
 	return result, nil

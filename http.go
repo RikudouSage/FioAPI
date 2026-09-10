@@ -1,6 +1,10 @@
 package fio
 
-import "errors"
+import (
+	"errors"
+	"io"
+	"net/http"
+)
 
 var ErrTooSoon = errors.New("the request was issued too soon")
 
@@ -8,3 +12,24 @@ const (
 	minSuccessfulStatusCode = 200
 	maxSuccessfulStatusCode = 299
 )
+
+type responseBodyDecoder func(body io.Reader) (any, error)
+type httpOptions struct {
+	responseDecoder responseBodyDecoder
+}
+
+type httpOption func(req *http.Request, options *httpOptions) error
+
+func withHeader(name, value string) httpOption {
+	return func(req *http.Request, _ *httpOptions) error {
+		req.Header.Set(name, value)
+		return nil
+	}
+}
+
+func withResponseBodyDecoder(parser responseBodyDecoder) httpOption {
+	return func(_ *http.Request, options *httpOptions) error {
+		options.responseDecoder = parser
+		return nil
+	}
+}
