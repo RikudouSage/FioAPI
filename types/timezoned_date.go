@@ -41,3 +41,13 @@ func (receiver *TimezonedDate) UnmarshalText(text []byte) error {
 func (receiver TimezonedDate) Value() (driver.Value, error) {
 	return receiver.String(), nil
 }
+
+// Scan implements database/sql.Scanner for dates with a numeric UTC offset in
+// YYYY-MM-DD-HHMM format.
+func (receiver *TimezonedDate) Scan(src any) error {
+	if str, ok := src.(string); ok {
+		return receiver.UnmarshalText([]byte(str))
+	}
+
+	return fmt.Errorf("the value must be a string, %T given", src)
+}

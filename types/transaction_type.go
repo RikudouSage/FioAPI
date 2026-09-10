@@ -1,6 +1,9 @@
 package types
 
-import "database/sql/driver"
+import (
+	"database/sql/driver"
+	"fmt"
+)
 
 const (
 	typeIncomingInsideBank               = "Příjem převodem uvnitř banky"
@@ -75,6 +78,15 @@ func (receiver TransactionType) String() string {
 // original string representation.
 func (receiver TransactionType) Value() (driver.Value, error) {
 	return receiver.String(), nil
+}
+
+// Scan implements database/sql.Scanner for transaction type strings.
+func (receiver *TransactionType) Scan(src any) error {
+	if str, ok := src.(string); ok {
+		return receiver.UnmarshalText([]byte(str))
+	}
+
+	return fmt.Errorf("the value must be a string, %T given", src)
 }
 
 // IsIncoming reports whether the type represents incoming funds.

@@ -41,6 +41,17 @@ func TestDateValueEqualsString(t *testing.T) {
 	}
 }
 
+func TestDateScanEqualsString(t *testing.T) {
+	want := Date(time.Date(2025, 6, 7, 0, 0, 0, 0, time.UTC))
+	var got Date
+	if err := got.Scan(want.String()); err != nil {
+		t.Fatal(err)
+	}
+	if got.String() != want.String() {
+		t.Errorf("Scan() produced %q, want %q", got.String(), want.String())
+	}
+}
+
 func TestTimezonedDateTextRoundTrip(t *testing.T) {
 	want := "2025-06-07+0230"
 	var date TimezonedDate
@@ -78,5 +89,16 @@ func TestTimezonedDateValueEqualsString(t *testing.T) {
 	}
 	if got != date.String() {
 		t.Errorf("Value() = %q, want String() = %q", got, date.String())
+	}
+}
+
+func TestTimezonedDateScanEqualsString(t *testing.T) {
+	want := TimezonedDate(time.Date(2025, 6, 7, 0, 0, 0, 0, time.FixedZone("test", 2*60*60)))
+	var got TimezonedDate
+	if err := got.Scan(want.String()); err != nil {
+		t.Fatal(err)
+	}
+	if got.String() != want.String() {
+		t.Errorf("Scan() produced %q, want %q", got.String(), want.String())
 	}
 }

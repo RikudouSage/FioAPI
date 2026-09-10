@@ -40,3 +40,12 @@ func (receiver *Date) UnmarshalText(text []byte) error {
 func (receiver Date) Value() (driver.Value, error) {
 	return receiver.String(), nil
 }
+
+// Scan implements database/sql.Scanner for dates in YYYY-MM-DD format.
+func (receiver *Date) Scan(src any) error {
+	if str, ok := src.(string); ok {
+		return receiver.UnmarshalText([]byte(str))
+	}
+
+	return fmt.Errorf("the value must be a string, %T given", src)
+}

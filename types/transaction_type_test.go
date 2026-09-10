@@ -58,3 +58,14 @@ func TestTransactionTypeValueEqualsString(t *testing.T) {
 		t.Errorf("Value() = %q, want String() = %q", got, typ.String())
 	}
 }
+
+func TestTransactionTypeScanEqualsString(t *testing.T) {
+	want := transactionType(typeCardPayment)
+	var got TransactionType
+	if err := got.Scan(want.String()); err != nil {
+		t.Fatal(err)
+	}
+	if got.String() != want.String() {
+		t.Errorf("Scan() produced %q, want %q", got.String(), want.String())
+	}
+}
