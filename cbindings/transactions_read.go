@@ -9,10 +9,10 @@ import "C"
 import (
 	"unsafe"
 
-	"go.chrastecky.dev/fio-api/fio/internal/response"
+	"go.chrastecky.dev/fio-api/fio/dto"
 )
 
-func accountInfoToC(value response.AccountInfo) C.FioAccountInfo {
+func accountInfoToC(value dto.AccountInfo) C.FioAccountInfo {
 	result := C.FioAccountInfo{
 		account_id:      stringToC(value.AccountID),
 		bank_id:         stringToC(value.BankID),
