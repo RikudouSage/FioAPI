@@ -9,6 +9,7 @@ import (
 // ErrTooSoon is returned when Fio bank rejects a request because the token's
 // request frequency limit has been exceeded.
 var ErrTooSoon = errors.New("the request was issued too soon")
+var ErrUnauthorizedLongAccess = errors.New("the api token is not authorized to get data older than 90 days")
 
 const (
 	minSuccessfulStatusCode = 200

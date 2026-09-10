@@ -133,6 +133,9 @@ func (receiver *client) request[TResult any](
 		if resp.StatusCode == http.StatusConflict {
 			return result, ErrTooSoon
 		}
+		if resp.StatusCode == http.StatusUnprocessableEntity {
+			return result, ErrUnauthorizedLongAccess
+		}
 
 		errMsg := fmt.Sprintf("failed sending request: %d %s", resp.StatusCode, http.StatusText(resp.StatusCode))
 		if receiver.debug {
