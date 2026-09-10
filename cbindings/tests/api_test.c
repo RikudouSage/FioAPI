@@ -89,6 +89,24 @@ static void test_context_and_handle_validation(void) {
 	expect_error_contains("out is NULL");
 	EXPECT(FioGetAccountInfo(0, context, NULL) == FioFailure);
 	expect_error_contains("out is NULL");
+	EXPECT(FioAccountInfoAndTransactions(0, context, NULL, &transactions) == FioFailure);
+	expect_error_contains("account_info is NULL");
+
+	FioAccountInfo account_info = {
+		.account_id = (char*)1,
+	};
+	EXPECT(FioAccountInfoAndTransactions(0, context, &account_info, NULL) == FioFailure);
+	EXPECT(account_info.account_id == NULL);
+	expect_error_contains("transactions is NULL");
+
+	account_info.account_id = (char*)1;
+	transactions.items = (FioTransaction*)1;
+	transactions.length = 99;
+	EXPECT(FioAccountInfoAndTransactions(999999, context, &account_info, &transactions) == FioFailure);
+	EXPECT(account_info.account_id == NULL);
+	EXPECT(transactions.items == NULL);
+	EXPECT(transactions.length == 0);
+	expect_error_contains("handle 999999 not found");
 	FioFreeAccountInfo(NULL);
 
 	EXPECT(FioCloseHandle(context) == FioSuccess);

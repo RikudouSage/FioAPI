@@ -31,6 +31,9 @@ type Client interface {
 	// GetAccountInfo returns metadata and balances for the account associated
 	// with the client's API token.
 	GetAccountInfo(ctx context.Context) (dto.AccountInfo, error)
+	// AccountInfoAndTransactions returns account metadata and transactions added
+	// since the token's last successful download.
+	AccountInfoAndTransactions(ctx context.Context) (dto.AccountInfo, []dto.Transaction, error)
 
 	// SetLastTransactionID sets the transaction from which the next
 	// TransactionsSinceLastPull request continues.

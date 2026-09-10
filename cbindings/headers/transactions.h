@@ -45,7 +45,8 @@ typedef struct {
 } FioTransactions;
 
 /**
- * Account metadata and balances returned by FioGetAccountInfo.
+ * Account metadata and balances returned by FioGetAccountInfo or
+ * FioAccountInfoAndTransactions.
  *
  * All strings are owned by this value and must be released together with it
  * by calling FioFreeAccountInfo. Nullable API values use nullable pointers.

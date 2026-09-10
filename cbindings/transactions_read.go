@@ -174,6 +174,47 @@ func FioGetAccountInfo(client C.ClientHandle, ctx C.ContextHandle, out *C.FioAcc
 	return C.FioSuccess
 }
 
+// FioAccountInfoAndTransactions returns account metadata and transactions
+// added since the client's last successful download. The caller owns both
+// returned values and must release them with FioFreeAccountInfo and
+// FioFreeTransactions.
+//
+//export FioAccountInfoAndTransactions
+func FioAccountInfoAndTransactions(client C.ClientHandle, ctx C.ContextHandle, accountInfo *C.FioAccountInfo, transactions *C.FioTransactions) C.FioResult {
+	if accountInfo == nil {
+		setLastError(nullPointerError("account_info"))
+		return C.FioFailure
+	}
+	*accountInfo = C.FioAccountInfo{}
+
+	if transactions == nil {
+		setLastError(nullPointerError("transactions"))
+		return C.FioFailure
+	}
+	*transactions = C.FioTransactions{}
+
+	clientGo, ctxGo, err := getCommonHandles(client, ctx)
+	if err != nil {
+		setLastError(err)
+		return C.FioFailure
+	}
+
+	info, transactionsGo, err := clientGo.AccountInfoAndTransactions(ctxGo)
+	if err != nil {
+		setLastError(err)
+		return C.FioFailure
+	}
+
+	*accountInfo = accountInfoToC(info)
+	result := returnTransactions(transactions, len(transactionsGo), func(i int) C.FioTransaction {
+		return transactionToC(transactionsGo[i])
+	})
+	if result != C.FioSuccess {
+		FioFreeAccountInfo(accountInfo)
+	}
+	return result
+}
+
 // FioFreeAccountInfo releases all memory owned by accountInfo. Passing NULL is
 // safe.
 //

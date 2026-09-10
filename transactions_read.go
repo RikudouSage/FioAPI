@@ -63,3 +63,19 @@ func (receiver *client) GetAccountInfo(ctx context.Context) (dto.AccountInfo, er
 
 	return resp.AccountStatement.Info, nil
 }
+
+// AccountInfoAndTransactions returns account metadata and transactions added
+// since the token's last successful download.
+func (receiver *client) AccountInfoAndTransactions(ctx context.Context) (dto.AccountInfo, []dto.Transaction, error) {
+	resp, err := receiver.request[response.TransactionsResponse](
+		ctx,
+		http.MethodGet,
+		"/last/{token}/transactions.json",
+		nil,
+	)
+	if err != nil {
+		return dto.AccountInfo{}, nil, fmt.Errorf("failed issuing a request: %w", err)
+	}
+
+	return resp.AccountStatement.Info, resp.AccountStatement.TransactionList.Transactions, nil
+}
