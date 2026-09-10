@@ -6,6 +6,9 @@ package main
 */
 import "C"
 
+// FioSetLastTransactionID sets the transaction from which the client's next
+// last-pull request continues.
+//
 //export FioSetLastTransactionID
 func FioSetLastTransactionID(client C.ClientHandle, ctx C.ContextHandle, id C.int64_t) C.FioResult {
 	clientGo, ctxGo, err := getCommonHandles(client, ctx)
@@ -23,6 +26,9 @@ func FioSetLastTransactionID(client C.ClientHandle, ctx C.ContextHandle, id C.in
 	return C.FioSuccess
 }
 
+// FioSetLastFailedTransactionDate moves the client's last-pull marker to the
+// supplied date, expressed as milliseconds since the Unix epoch.
+//
 //export FioSetLastFailedTransactionDate
 func FioSetLastFailedTransactionDate(client C.ClientHandle, ctx C.ContextHandle, dateMs C.uint64_t) C.FioResult {
 	clientGo, ctxGo, err := getCommonHandles(client, ctx)

@@ -6,9 +6,13 @@ package main
 
 #ifndef FIO_NEW_CLIENT_OPTIONS
 #define FIO_NEW_CLIENT_OPTIONS
+// Options used to create a Fio API client.
 typedef struct {
+	// Required Fio API token. The string is borrowed for the call.
 	const char* token;
+	// Optional API base URL. NULL selects the production endpoint.
 	const char* clientUrl;
+	// Enables additional response details in errors and formatted request XML.
 	bool debug;
 } NewClientOptions;
 #endif
@@ -17,6 +21,9 @@ typedef struct {
 import "C"
 import "go.chrastecky.dev/fio-api/fio"
 
+// FioNewClient creates a client and writes its opaque handle to out.
+// The caller must release the handle with FioCloseHandle.
+//
 //export FioNewClient
 func FioNewClient(out *C.ClientHandle, options C.NewClientOptions) C.FioResult {
 	if out == nil {

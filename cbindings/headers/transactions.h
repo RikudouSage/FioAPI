@@ -5,6 +5,14 @@
 
 #include "common.h"
 
+/**
+ * A booked account transaction.
+ *
+ * date_ms is expressed as milliseconds since the Unix epoch. Nullable API
+ * values are represented by nullable pointers. Values returned as part of a
+ * FioTransactions collection are owned by that collection and must not be
+ * freed individually.
+ */
 typedef struct {
 	int64_t id;
 	uint64_t date_ms;
@@ -27,11 +35,23 @@ typedef struct {
 	char* payer_reference;
 } FioTransaction;
 
+/**
+ * An owned collection of booked transactions.
+ * Release it with FioFreeTransactions, including when length is zero.
+ */
 typedef struct {
 	FioTransaction* items;
 	size_t length;
 } FioTransactions;
 
+/**
+ * A Czech domestic payment order.
+ *
+ * Required string pointers must be non-NULL. Optional string pointers may be
+ * NULL and are borrowed only for the duration of FioIssueDomesticTransaction.
+ * date_ms is expressed as milliseconds since the Unix epoch. Empty currency
+ * and payment_type strings receive the defaults defined by the Go API.
+ */
 typedef struct {
 	const char* account_from;
 	const char* currency;

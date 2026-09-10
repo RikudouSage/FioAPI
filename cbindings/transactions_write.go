@@ -5,6 +5,9 @@ package main
 */
 import "C"
 
+// FioIssueDomesticTransaction submits a domestic payment order. String
+// pointers in transaction are borrowed for the duration of the call.
+//
 //export FioIssueDomesticTransaction
 func FioIssueDomesticTransaction(client C.ClientHandle, ctx C.ContextHandle, transaction C.FioDomesticTransaction) C.FioResult {
 	clientGo, ctxGo, err := getCommonHandles(client, ctx)

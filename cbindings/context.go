@@ -16,6 +16,9 @@ func (receiver *contextHandle) Close() error {
 	return nil
 }
 
+// FioNewContext creates a cancellable background context and writes its opaque
+// handle to out. Closing the handle cancels the context.
+//
 //export FioNewContext
 func FioNewContext(out *C.ContextHandle) C.FioResult {
 	if out == nil {

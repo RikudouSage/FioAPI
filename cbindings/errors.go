@@ -35,6 +35,10 @@ func nullPointerError(name string) error {
 	return errors.New(name + " is NULL")
 }
 
+// FioGetLastError copies the current thread's last error into buf and returns
+// the required buffer size, including the terminating NUL byte. Passing NULL
+// or a short buffer still returns the required size.
+//
 //export FioGetLastError
 func FioGetLastError(buf *C.char, bufLen C.size_t) C.size_t {
 	return C.fio_get_last_error(buf, bufLen)
