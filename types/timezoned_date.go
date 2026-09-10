@@ -1,6 +1,7 @@
 package types
 
 import (
+	"database/sql/driver"
 	"fmt"
 	"time"
 )
@@ -33,4 +34,10 @@ func (receiver *TimezonedDate) UnmarshalText(text []byte) error {
 
 	*receiver = TimezonedDate(parsed)
 	return nil
+}
+
+// Value implements [driver.Valuer] by returning the date and numeric UTC
+// offset in YYYY-MM-DD-HHMM format.
+func (receiver TimezonedDate) Value() (driver.Value, error) {
+	return receiver.String(), nil
 }

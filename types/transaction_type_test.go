@@ -47,3 +47,14 @@ func TestTransactionTypeMarshalText(t *testing.T) {
 		t.Errorf("MarshalText() = %q", text)
 	}
 }
+
+func TestTransactionTypeValueEqualsString(t *testing.T) {
+	typ := transactionType(typeCardPayment)
+	got, err := typ.Value()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got != typ.String() {
+		t.Errorf("Value() = %q, want String() = %q", got, typ.String())
+	}
+}

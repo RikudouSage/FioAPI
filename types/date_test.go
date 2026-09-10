@@ -30,6 +30,17 @@ func TestDateRejectsInvalidText(t *testing.T) {
 	}
 }
 
+func TestDateValueEqualsString(t *testing.T) {
+	date := Date(time.Date(2025, 6, 7, 0, 0, 0, 0, time.UTC))
+	got, err := date.Value()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got != date.String() {
+		t.Errorf("Value() = %q, want String() = %q", got, date.String())
+	}
+}
+
 func TestTimezonedDateTextRoundTrip(t *testing.T) {
 	want := "2025-06-07+0230"
 	var date TimezonedDate
@@ -56,5 +67,16 @@ func TestTimezonedDateRejectsInvalidText(t *testing.T) {
 	var date TimezonedDate
 	if err := date.UnmarshalText([]byte("2025-06-07")); err == nil {
 		t.Fatal("UnmarshalText() unexpectedly accepted a date without an offset")
+	}
+}
+
+func TestTimezonedDateValueEqualsString(t *testing.T) {
+	date := TimezonedDate(time.Date(2025, 6, 7, 0, 0, 0, 0, time.FixedZone("test", 2*60*60)))
+	got, err := date.Value()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got != date.String() {
+		t.Errorf("Value() = %q, want String() = %q", got, date.String())
 	}
 }

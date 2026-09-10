@@ -1,5 +1,7 @@
 package types
 
+import "database/sql/driver"
+
 const (
 	typeIncomingInsideBank               = "Příjem převodem uvnitř banky"
 	typeOutgoingInsideBank               = "Platba převodem uvnitř banky"
@@ -67,6 +69,12 @@ func (receiver *TransactionType) UnmarshalText(text []byte) error {
 // String returns the category text supplied by Fio bank.
 func (receiver TransactionType) String() string {
 	return receiver.innerType
+}
+
+// Value implements [driver.Valuer] by returning the transaction type's
+// original string representation.
+func (receiver TransactionType) Value() (driver.Value, error) {
+	return receiver.String(), nil
 }
 
 // IsIncoming reports whether the type represents incoming funds.

@@ -1,6 +1,7 @@
 package types
 
 import (
+	"database/sql/driver"
 	"fmt"
 	"time"
 )
@@ -33,4 +34,9 @@ func (receiver *Date) UnmarshalText(text []byte) error {
 
 	*receiver = Date(parsed)
 	return nil
+}
+
+// Value implements [driver.Valuer] by returning the date in YYYY-MM-DD format.
+func (receiver Date) Value() (driver.Value, error) {
+	return receiver.String(), nil
 }
