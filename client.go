@@ -17,13 +17,28 @@ import (
 	. "go.chrastecky.dev/fio-api/fio/internal/helper"
 )
 
+// Client provides access to the supported Fio bank API operations.
+//
+// A Client is safe to reuse for multiple requests. Callers should pass a
+// context with an appropriate timeout to every operation.
 type Client interface {
+	// TransactionsByDate returns transactions booked in the inclusive date
+	// range from startDate through endDate.
 	TransactionsByDate(ctx context.Context, startDate time.Time, endDate time.Time) ([]dto.Transaction, error)
+	// TransactionsSinceLastPull returns transactions added since the token's
+	// last successful download.
 	TransactionsSinceLastPull(ctx context.Context) ([]dto.Transaction, error)
 
+	// SetLastTransactionID sets the transaction from which the next
+	// TransactionsSinceLastPull request continues.
 	SetLastTransactionID(ctx context.Context, id int64) error
+	// SetLastFailedTransactionDate moves the last-pull marker to date after a
+	// failed download. Only the calendar date portion is sent to Fio bank.
 	SetLastFailedTransactionDate(ctx context.Context, date time.Time) error
 
+	// IssueDomesticTransaction submits a domestic payment order.
+	// Empty optional values are populated as described by
+	// [dto.DomesticTransaction.ProvideDefaults].
 	IssueDomesticTransaction(ctx context.Context, transaction dto.DomesticTransaction) error
 }
 
@@ -33,6 +48,10 @@ type client struct {
 	debug   bool
 }
 
+// NewClient creates a Fio bank API client using token for authentication.
+//
+// By default, the client connects to Fio bank's production REST endpoint.
+// Options are applied in order; later options override earlier ones.
 func NewClient(token string, options ...Option) (Client, error) {
 	instance := &client{
 		token: token,

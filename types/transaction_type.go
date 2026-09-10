@@ -46,23 +46,30 @@ const (
 	typeInstantEuroOutgoing              = "Okamžitá odchozí Europlatba"
 )
 
+// TransactionType is the localized transaction category reported by Fio
+// bank. Unknown values are preserved and can be detected with [TransactionType.IsKnown].
 type TransactionType struct {
 	innerType string
 }
 
+// MarshalText implements encoding.TextMarshaler.
 func (receiver TransactionType) MarshalText() ([]byte, error) {
 	return []byte(receiver.innerType), nil
 }
 
+// UnmarshalText implements encoding.TextUnmarshaler. It accepts unknown values
+// so newer server-side categories remain available to callers.
 func (receiver *TransactionType) UnmarshalText(text []byte) error {
 	*receiver = TransactionType{innerType: string(text)}
 	return nil
 }
 
+// String returns the category text supplied by Fio bank.
 func (receiver TransactionType) String() string {
 	return receiver.innerType
 }
 
+// IsIncoming reports whether the type represents incoming funds.
 func (receiver TransactionType) IsIncoming() bool {
 	switch receiver.innerType {
 	case
@@ -85,6 +92,7 @@ func (receiver TransactionType) IsIncoming() bool {
 	}
 }
 
+// IsOutgoing reports whether the type represents outgoing funds.
 func (receiver TransactionType) IsOutgoing() bool {
 	switch receiver.innerType {
 	case
@@ -114,6 +122,7 @@ func (receiver TransactionType) IsOutgoing() bool {
 	}
 }
 
+// IsImmediate reports whether the type represents an instant payment.
 func (receiver TransactionType) IsImmediate() bool {
 	switch receiver.innerType {
 	case
@@ -127,6 +136,8 @@ func (receiver TransactionType) IsImmediate() bool {
 	}
 }
 
+// IsInternal reports whether the type represents a transfer within Fio bank
+// or between the account owner's accounts.
 func (receiver TransactionType) IsInternal() bool {
 	switch receiver.innerType {
 	case
@@ -141,10 +152,12 @@ func (receiver TransactionType) IsInternal() bool {
 	}
 }
 
+// IsCardPayment reports whether the type represents a card payment.
 func (receiver TransactionType) IsCardPayment() bool {
 	return receiver.innerType == typeCardPayment
 }
 
+// IsCash reports whether the type represents a cash transaction.
 func (receiver TransactionType) IsCash() bool {
 	switch receiver.innerType {
 	case
@@ -160,6 +173,7 @@ func (receiver TransactionType) IsCash() bool {
 	}
 }
 
+// IsDirectDebit reports whether the type represents a direct debit.
 func (receiver TransactionType) IsDirectDebit() bool {
 	switch receiver.innerType {
 	case
@@ -173,6 +187,7 @@ func (receiver TransactionType) IsDirectDebit() bool {
 	}
 }
 
+// IsFee reports whether the type represents a fee.
 func (receiver TransactionType) IsFee() bool {
 	switch receiver.innerType {
 	case
@@ -188,6 +203,7 @@ func (receiver TransactionType) IsFee() bool {
 	}
 }
 
+// IsInterest reports whether the type represents interest or interest tax.
 func (receiver TransactionType) IsInterest() bool {
 	switch receiver.innerType {
 	case
@@ -202,10 +218,13 @@ func (receiver TransactionType) IsInterest() bool {
 	}
 }
 
+// IsCorrection reports whether the type represents a corrective entry.
 func (receiver TransactionType) IsCorrection() bool {
 	return receiver.innerType == typeCorrection
 }
 
+// IsKnown reports whether the type is recognized by this version of the
+// package.
 func (receiver TransactionType) IsKnown() bool {
 	switch receiver.innerType {
 	case

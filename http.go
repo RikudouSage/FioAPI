@@ -6,6 +6,8 @@ import (
 	"net/http"
 )
 
+// ErrTooSoon is returned when Fio bank rejects a request because the token's
+// request frequency limit has been exceeded.
 var ErrTooSoon = errors.New("the request was issued too soon")
 
 const (
