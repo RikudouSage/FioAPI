@@ -69,7 +69,7 @@ func (receiver *client) multipartImportBody(order request.PaymentImport) (conten
 	return out.Bytes(), writer.FormDataContentType(), nil
 }
 
-func (receiver *client) IssueDomesticTransactions(ctx context.Context, transaction dto.DomesticTransaction) error {
+func (receiver *client) IssueDomesticTransaction(ctx context.Context, transaction dto.DomesticTransaction) error {
 	order := request.PaymentImport{
 		Orders: request.PaymentOrders{
 			DomesticTransactions: []*dto.DomesticTransaction{&transaction},

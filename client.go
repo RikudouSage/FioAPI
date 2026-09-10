@@ -24,7 +24,7 @@ type Client interface {
 	SetLastTransactionID(ctx context.Context, id int64) error
 	SetLastFailedTransactionDate(ctx context.Context, date time.Time) error
 
-	IssueDomesticTransactions(ctx context.Context, transaction dto.DomesticTransaction) error
+	IssueDomesticTransaction(ctx context.Context, transaction dto.DomesticTransaction) error
 }
 
 type client struct {

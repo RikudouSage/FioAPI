@@ -35,7 +35,7 @@ func FioNewClient(out *C.ClientHandle, options C.NewClientOptions) C.FioResult {
 		goOptions = append(goOptions, fio.WithBaseURL(C.GoString(options.clientUrl)))
 	}
 
-	client, err := fio.NewClient(C.GoString(options.clientUrl), goOptions...)
+	client, err := fio.NewClient(C.GoString(options.token), goOptions...)
 	if err != nil {
 		setLastError(err)
 		return C.FioFailure
