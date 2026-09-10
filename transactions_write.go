@@ -9,64 +9,41 @@ import (
 	"mime/multipart"
 	"net/http"
 
+	"github.com/samber/lo"
 	"go.chrastecky.dev/fio-api/fio/dto"
 	"go.chrastecky.dev/fio-api/fio/internal/request"
 	"go.chrastecky.dev/fio-api/fio/internal/response"
 )
 
-func (receiver *client) createXml(order request.PaymentImport) ([]byte, error) {
+func (receiver *client) createXml(order request.PaymentImport) []byte {
 	out := bytes.NewBuffer(nil)
 
 	order.ProvideDefaults()
-	if _, err := io.WriteString(out, xml.Header); err != nil {
-		return nil, fmt.Errorf("failed writing xml header: %w", err)
-	}
+	lo.Must(io.WriteString(out, xml.Header))
 
 	encoder := xml.NewEncoder(out)
-	defer encoder.Close()
 	if receiver.debug {
 		encoder.Indent("", "  ")
 	}
-	if err := encoder.Encode(order); err != nil {
-		return nil, fmt.Errorf("failed writing xml content: %w", err)
-	}
-	if err := encoder.Flush(); err != nil {
-		return nil, fmt.Errorf("failed writing xml content: %w", err)
-	}
+	lo.Must0(encoder.Encode(order))
+	lo.Must0(encoder.Close())
 
-	return out.Bytes(), nil
+	return out.Bytes()
 }
 
-func (receiver *client) multipartImportBody(order request.PaymentImport) (content []byte, contentType string, err error) {
+func (receiver *client) multipartImportBody(order request.PaymentImport) (content []byte, contentType string) {
 	out := bytes.NewBuffer(nil)
 	writer := multipart.NewWriter(out)
-	defer writer.Close()
 
-	if err := writer.WriteField("type", "xml"); err != nil {
-		return nil, "", fmt.Errorf("failed writing multipart type field: %w", err)
-	}
-	if err := writer.WriteField("token", receiver.token); err != nil {
-		return nil, "", fmt.Errorf("failed writing multipart token field: %w", err)
-	}
+	lo.Must0(writer.WriteField("type", "xml"))
+	lo.Must0(writer.WriteField("token", receiver.token))
 
-	filePart, err := writer.CreateFormFile("file", "payments.xml")
-	if err != nil {
-		return nil, "", fmt.Errorf("failed creating multipart file part: %w", err)
-	}
+	filePart := lo.Must(writer.CreateFormFile("file", "payments.xml"))
 
-	xmlContent, err := receiver.createXml(order)
-	if err != nil {
-		return nil, "", fmt.Errorf("failed creating multipart file xml content: %w", err)
-	}
+	lo.Must(filePart.Write(receiver.createXml(order)))
+	lo.Must0(writer.Close())
 
-	if _, err := filePart.Write(xmlContent); err != nil {
-		return nil, "", fmt.Errorf("failed writing multipart file xml content: %w", err)
-	}
-	if err := writer.Close(); err != nil {
-		return nil, "", fmt.Errorf("failed closing multipart file writer: %w", err)
-	}
-
-	return out.Bytes(), writer.FormDataContentType(), nil
+	return out.Bytes(), writer.FormDataContentType()
 }
 
 func (receiver *client) IssueDomesticTransaction(ctx context.Context, transaction dto.DomesticTransaction) error {
@@ -76,10 +53,7 @@ func (receiver *client) IssueDomesticTransaction(ctx context.Context, transactio
 		},
 	}
 
-	data, contentType, err := receiver.multipartImportBody(order)
-	if err != nil {
-		return fmt.Errorf("failed creating xml: %w", err)
-	}
+	data, contentType := receiver.multipartImportBody(order)
 	resp, err := receiver.request[response.ImportResponse](
 		ctx,
 		http.MethodPost,
@@ -94,7 +68,7 @@ func (receiver *client) IssueDomesticTransaction(ctx context.Context, transactio
 				return nil, fmt.Errorf("failed decoding xml: %w", err)
 			}
 
-			return result, err
+			return result, nil
 		}),
 	)
 	if err != nil {

@@ -10,6 +10,7 @@ import (
 
 	"github.com/shopspring/decimal"
 	"go.chrastecky.dev/fio-api/fio/dto"
+	"go.chrastecky.dev/fio-api/fio/internal/request"
 )
 
 func TestIssueDomesticTransactionCreatesMultipartXML(t *testing.T) {
@@ -87,5 +88,34 @@ func TestIssueDomesticTransactionReportsImportFailure(t *testing.T) {
 	err := client.IssueDomesticTransaction(context.Background(), dto.DomesticTransaction{})
 	if err == nil || !strings.Contains(err.Error(), "status error (code: 11)") {
 		t.Fatalf("error = %v, want import status and code", err)
+	}
+}
+
+func TestIssueDomesticTransactionReportsInvalidXMLResponse(t *testing.T) {
+	client, _ := newTestClient(t, func(w http.ResponseWriter, _ *http.Request) {
+		_, _ = io.WriteString(w, `<not-valid`)
+	})
+	err := client.IssueDomesticTransaction(context.Background(), dto.DomesticTransaction{})
+	if err == nil || !strings.Contains(err.Error(), "failed decoding xml") {
+		t.Fatalf("error = %v, want XML decoding error", err)
+	}
+}
+
+func TestIssueDomesticTransactionReportsHTTPFailure(t *testing.T) {
+	client, _ := newTestClient(t, func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusServiceUnavailable)
+	})
+	err := client.IssueDomesticTransaction(context.Background(), dto.DomesticTransaction{})
+	if err == nil || !strings.Contains(err.Error(), "503 Service Unavailable") {
+		t.Fatalf("error = %v, want service-unavailable error", err)
+	}
+}
+
+func TestCreateXMLDebugFormatting(t *testing.T) {
+	data := (&client{debug: true}).createXml(request.PaymentImport{
+		Orders: request.PaymentOrders{DomesticTransactions: []*dto.DomesticTransaction{{}}},
+	})
+	if !strings.Contains(string(data), "\n  <Orders>") {
+		t.Fatalf("debug XML is not indented:\n%s", data)
 	}
 }

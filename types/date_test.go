@@ -43,4 +43,18 @@ func TestTimezonedDateTextRoundTrip(t *testing.T) {
 	if _, offset := date.AsTime().Zone(); offset != wantOffset {
 		t.Errorf("parsed offset = %s, want 2h30m", time.Duration(offset)*time.Second)
 	}
+	text, err := date.MarshalText()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if string(text) != want {
+		t.Errorf("MarshalText() = %q, want %q", text, want)
+	}
+}
+
+func TestTimezonedDateRejectsInvalidText(t *testing.T) {
+	var date TimezonedDate
+	if err := date.UnmarshalText([]byte("2025-06-07")); err == nil {
+		t.Fatal("UnmarshalText() unexpectedly accepted a date without an offset")
+	}
 }

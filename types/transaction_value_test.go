@@ -32,3 +32,10 @@ func TestUnknownTransactionTypeIsPreserved(t *testing.T) {
 		t.Errorf("unknown type = %q, IsKnown = %v", typ, typ.IsKnown())
 	}
 }
+
+func TestTransactionValueRejectsInvalidJSON(t *testing.T) {
+	var value TransactionValue[string]
+	if err := json.Unmarshal([]byte(`{"value":[]}`), &value); err == nil {
+		t.Fatal("UnmarshalJSON() unexpectedly accepted an incompatible value")
+	}
+}
