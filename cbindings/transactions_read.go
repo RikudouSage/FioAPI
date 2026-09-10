@@ -39,11 +39,11 @@ func returnTransactions(out *C.FioTransactions, transactionsGoLen int, fill func
 }
 
 // FioTransactionsByDate returns transactions in the inclusive date range.
-// Dates are expressed as milliseconds since the Unix epoch. The caller owns
+// Dates use YYYY-MM-DD format. The caller owns
 // the returned allocation and must release it with FioFreeTransactions.
 //
 //export FioTransactionsByDate
-func FioTransactionsByDate(client C.ClientHandle, ctx C.ContextHandle, startDateMs, endDateMs C.uint64_t, out *C.FioTransactions) C.FioResult {
+func FioTransactionsByDate(client C.ClientHandle, ctx C.ContextHandle, startDate, endDate *C.char, out *C.FioTransactions) C.FioResult {
 	if out == nil {
 		setLastError(nullPointerError("out"))
 		return C.FioFailure
@@ -57,7 +57,18 @@ func FioTransactionsByDate(client C.ClientHandle, ctx C.ContextHandle, startDate
 		return C.FioFailure
 	}
 
-	transactions, err := clientGo.TransactionsByDate(ctxGo, dateFromC(startDateMs), dateFromC(endDateMs))
+	startDateGo, err := dateFromC("start_date", startDate)
+	if err != nil {
+		setLastError(err)
+		return C.FioFailure
+	}
+	endDateGo, err := dateFromC("end_date", endDate)
+	if err != nil {
+		setLastError(err)
+		return C.FioFailure
+	}
+
+	transactions, err := clientGo.TransactionsByDate(ctxGo, startDateGo.AsTime(), endDateGo.AsTime())
 	if err != nil {
 		setLastError(err)
 		return C.FioFailure

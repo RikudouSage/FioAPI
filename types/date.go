@@ -14,9 +14,14 @@ func (receiver Date) AsTime() time.Time {
 	return time.Time(receiver)
 }
 
+// String returns the date in YYYY-MM-DD format.
+func (receiver Date) String() string {
+	return receiver.AsTime().Format("2006-01-02")
+}
+
 // MarshalText implements encoding.TextMarshaler using YYYY-MM-DD format.
 func (receiver Date) MarshalText() (text []byte, err error) {
-	return []byte(receiver.AsTime().Format("2006-01-02")), nil
+	return []byte(receiver.String()), nil
 }
 
 // UnmarshalText implements encoding.TextUnmarshaler for YYYY-MM-DD values.

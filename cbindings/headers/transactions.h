@@ -8,14 +8,14 @@
 /**
  * A booked account transaction.
  *
- * date_ms is expressed as milliseconds since the Unix epoch. Nullable API
- * values are represented by nullable pointers. Values returned as part of a
- * FioTransactions collection are owned by that collection and must not be
- * freed individually.
+ * date uses YYYY-MM-DD-HHMM format, including the numeric UTC offset supplied
+ * by Fio. Nullable API values are represented by nullable pointers. Values
+ * returned as part of a FioTransactions collection are owned by that
+ * collection and must not be freed individually.
  */
 typedef struct {
 	int64_t id;
-	uint64_t date_ms;
+	char* date;
 	char* amount;
 	char* currency;
 	char* counterparty_account;
@@ -49,8 +49,8 @@ typedef struct {
  *
  * Required string pointers must be non-NULL. Optional string pointers may be
  * NULL and are borrowed only for the duration of FioIssueDomesticTransaction.
- * date_ms is expressed as milliseconds since the Unix epoch. Empty currency
- * and payment_type strings receive the defaults defined by the Go API.
+ * date uses YYYY-MM-DD format. A NULL or empty date, currency, or payment_type
+ * receives the corresponding default defined by the Go API.
  */
 typedef struct {
 	const char* account_from;
@@ -61,7 +61,7 @@ typedef struct {
 	const char* constant_symbol;
 	const char* variable_symbol;
 	const char* specific_symbol;
-	uint64_t date_ms;
+	const char* date;
 	const char* message_for_recipient;
 	const char* comment;
 	const char* payment_type;

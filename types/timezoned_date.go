@@ -14,9 +14,14 @@ func (receiver TimezonedDate) AsTime() time.Time {
 	return time.Time(receiver)
 }
 
+// String returns the date in Fio's YYYY-MM-DD-HHMM format.
+func (receiver TimezonedDate) String() string {
+	return receiver.AsTime().Format("2006-01-02-0700")
+}
+
 // MarshalText implements encoding.TextMarshaler using the Fio API date format.
 func (receiver TimezonedDate) MarshalText() (text []byte, err error) {
-	return []byte(receiver.AsTime().Format("2006-01-02-0700")), nil
+	return []byte(receiver.String()), nil
 }
 
 // UnmarshalText implements encoding.TextUnmarshaler for Fio API date values.

@@ -27,17 +27,23 @@ func FioSetLastTransactionID(client C.ClientHandle, ctx C.ContextHandle, id C.in
 }
 
 // FioSetLastFailedTransactionDate moves the client's last-pull marker to the
-// supplied date, expressed as milliseconds since the Unix epoch.
+// supplied date in YYYY-MM-DD format.
 //
 //export FioSetLastFailedTransactionDate
-func FioSetLastFailedTransactionDate(client C.ClientHandle, ctx C.ContextHandle, dateMs C.uint64_t) C.FioResult {
+func FioSetLastFailedTransactionDate(client C.ClientHandle, ctx C.ContextHandle, date *C.char) C.FioResult {
 	clientGo, ctxGo, err := getCommonHandles(client, ctx)
 	if err != nil {
 		setLastError(err)
 		return C.FioFailure
 	}
 
-	if err = clientGo.SetLastFailedTransactionDate(ctxGo, dateFromC(dateMs)); err != nil {
+	dateGo, err := dateFromC("date", date)
+	if err != nil {
+		setLastError(err)
+		return C.FioFailure
+	}
+
+	if err = clientGo.SetLastFailedTransactionDate(ctxGo, dateGo.AsTime()); err != nil {
 		setLastError(err)
 		return C.FioFailure
 	}

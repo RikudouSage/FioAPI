@@ -8,21 +8,12 @@ package main
 import "C"
 import (
 	"fmt"
-	"time"
 	"unsafe"
 
 	"github.com/shopspring/decimal"
 	"go.chrastecky.dev/fio-api/fio/dto"
 	"go.chrastecky.dev/fio-api/fio/types"
 )
-
-func dateToC(date time.Time) C.uint64_t {
-	return C.uint64_t(date.UnixMilli())
-}
-
-func dateFromC(date C.uint64_t) time.Time {
-	return time.UnixMilli(int64(date))
-}
 
 func stringToC(value string) *C.char {
 	return C.CString(value)
@@ -53,10 +44,24 @@ func requiredStringFromC(name string, value *C.char) (string, error) {
 	return C.GoString(value), nil
 }
 
+func dateFromC(name string, value *C.char) (types.Date, error) {
+	text, err := requiredStringFromC(name, value)
+	if err != nil {
+		return types.Date{}, err
+	}
+
+	var date types.Date
+	if err = date.UnmarshalText([]byte(text)); err != nil {
+		return types.Date{}, fmt.Errorf("invalid %s: %w", name, err)
+	}
+
+	return date, nil
+}
+
 func transactionToC(value dto.Transaction) C.FioTransaction {
 	result := C.FioTransaction{
 		id:                     C.int64_t(value.ID.Value),
-		date_ms:                dateToC(value.Date.Value.AsTime()),
+		date:                   stringToC(value.Date.Value.String()),
 		amount:                 stringToC(value.Amount.Value.String()),
 		currency:               stringToC(value.Currency.Value),
 		counterparty_account:   stringToC(value.CounterpartyAccount.Value),
@@ -90,7 +95,7 @@ func freeTransaction(value *C.FioTransaction) {
 		return
 	}
 
-	for _, ptr := range []*C.char{value.amount, value.currency, value.counterparty_account,
+	for _, ptr := range []*C.char{value.date, value.amount, value.currency, value.counterparty_account,
 		value.counterparty_name, value.counterparty_bank_code, value.counterparty_bank_name,
 		value.constant_symbol, value.variable_symbol, value.specific_symbol, value.user_identity,
 		value.transaction_type, value.performed_by, value.additional_info, value.comment, value.bic,
@@ -128,11 +133,25 @@ func domesticTransactionFromC(value C.FioDomesticTransaction) (dto.DomesticTrans
 		return dto.DomesticTransaction{}, err
 	}
 
+	var date types.Date
+	if value.date != nil && C.GoString(value.date) != "" {
+		date, err = dateFromC("transaction.date", value.date)
+		if err != nil {
+			return dto.DomesticTransaction{}, err
+		}
+	}
+
 	result := dto.DomesticTransaction{
-		AccountFrom: accountFrom, Amount: amount, AccountTo: accountTo, BankCode: bankCode,
-		ConstantSymbol: optionalStringFromC(value.constant_symbol), VariableSymbol: optionalStringFromC(value.variable_symbol),
-		SpecificSymbol: optionalStringFromC(value.specific_symbol), MessageForRecipient: optionalStringFromC(value.message_for_recipient),
-		Comment: optionalStringFromC(value.comment), Date: types.Date(dateFromC(value.date_ms)),
+		AccountFrom:         accountFrom,
+		Amount:              amount,
+		AccountTo:           accountTo,
+		BankCode:            bankCode,
+		ConstantSymbol:      optionalStringFromC(value.constant_symbol),
+		VariableSymbol:      optionalStringFromC(value.variable_symbol),
+		SpecificSymbol:      optionalStringFromC(value.specific_symbol),
+		MessageForRecipient: optionalStringFromC(value.message_for_recipient),
+		Comment:             optionalStringFromC(value.comment),
+		Date:                date,
 	}
 
 	if value.currency != nil {
