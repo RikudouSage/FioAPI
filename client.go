@@ -164,6 +164,8 @@ func (receiver *client) uriWithPath(path string) string {
 			strings.TrimSuffix(uri.Path, "/"),
 			strings.TrimPrefix(path, "/"),
 		}, "/")
+	} else {
+		uri.Path = path
 	}
 
 	return uri.String()
