@@ -87,6 +87,9 @@ static void test_context_and_handle_validation(void) {
 
 	EXPECT(FioTransactionsSinceLastPull(0, context, NULL) == FioFailure);
 	expect_error_contains("out is NULL");
+	EXPECT(FioGetAccountInfo(0, context, NULL) == FioFailure);
+	expect_error_contains("out is NULL");
+	FioFreeAccountInfo(NULL);
 
 	EXPECT(FioCloseHandle(context) == FioSuccess);
 	EXPECT(FioCloseHandle(context) == FioFailure);

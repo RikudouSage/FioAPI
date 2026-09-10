@@ -42,3 +42,24 @@ func (receiver *client) TransactionsSinceLastPull(ctx context.Context) ([]dto.Tr
 
 	return resp.AccountStatement.TransactionList.Transactions, nil
 }
+
+// GetAccountInfo returns metadata and balances for the account associated with
+// the client's API token.
+func (receiver *client) GetAccountInfo(ctx context.Context) (response.AccountInfo, error) {
+	date := time.Now().AddDate(0, 0, 1).Format("2006-01-02")
+	resp, err := receiver.request[response.TransactionsResponse](
+		ctx,
+		http.MethodGet,
+		fmt.Sprintf(
+			"/periods/{token}/%s/%s/transactions.json",
+			date,
+			date,
+		),
+		nil,
+	)
+	if err != nil {
+		return response.AccountInfo{}, fmt.Errorf("failed issuing a request: %w", err)
+	}
+
+	return resp.AccountStatement.Info, nil
+}

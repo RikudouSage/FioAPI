@@ -45,6 +45,30 @@ typedef struct {
 } FioTransactions;
 
 /**
+ * Account metadata and balances returned by FioGetAccountInfo.
+ *
+ * All strings are owned by this value and must be released together with it
+ * by calling FioFreeAccountInfo. Nullable API values use nullable pointers.
+ * date_start and date_end use YYYY-MM-DD-HHMM format.
+ */
+typedef struct {
+	char* account_id;
+	char* bank_id;
+	char* currency;
+	char* iban;
+	char* bic;
+	char* opening_balance;
+	char* closing_balance;
+	char* date_start;
+	char* date_end;
+	uint16_t* year_list;
+	int64_t* id_list;
+	int64_t* id_from;
+	int64_t* id_to;
+	int64_t* id_last_download;
+} FioAccountInfo;
+
+/**
  * A Czech domestic payment order.
  *
  * Required string pointers must be non-NULL. Optional string pointers may be

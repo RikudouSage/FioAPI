@@ -6,7 +6,45 @@ package main
 */
 import "C"
 
-import "unsafe"
+import (
+	"unsafe"
+
+	"go.chrastecky.dev/fio-api/fio/internal/response"
+)
+
+func accountInfoToC(value response.AccountInfo) C.FioAccountInfo {
+	result := C.FioAccountInfo{
+		account_id:      stringToC(value.AccountID),
+		bank_id:         stringToC(value.BankID),
+		currency:        stringToC(value.Currency),
+		iban:            stringToC(value.IBAN),
+		bic:             stringToC(value.BIC),
+		opening_balance: stringToC(value.OpeningBalance.String()),
+		closing_balance: stringToC(value.ClosingBalance.String()),
+		date_start:      stringToC(value.DateStart.String()),
+		date_end:        stringToC(value.DateEnd.String()),
+	}
+	if value.YearList != nil {
+		result.year_list = (*C.uint16_t)(C.malloc(C.size_t(unsafe.Sizeof(C.uint16_t(0)))))
+		if result.year_list != nil {
+			*result.year_list = C.uint16_t(*value.YearList)
+		}
+	}
+	setOptionalInt64 := func(out **C.int64_t, value *int64) {
+		if value == nil {
+			return
+		}
+		*out = (*C.int64_t)(C.malloc(C.size_t(unsafe.Sizeof(C.int64_t(0)))))
+		if *out != nil {
+			**out = C.int64_t(*value)
+		}
+	}
+	setOptionalInt64(&result.id_list, value.IDList)
+	setOptionalInt64(&result.id_from, value.IDFrom)
+	setOptionalInt64(&result.id_to, value.IDTo)
+	setOptionalInt64(&result.id_last_download, value.IDLastDownload)
+	return result
+}
 
 func returnTransactions(out *C.FioTransactions, transactionsGoLen int, fill func(int) C.FioTransaction) C.FioResult {
 	if out == nil {
@@ -106,6 +144,54 @@ func FioTransactionsSinceLastPull(client C.ClientHandle, ctx C.ContextHandle, ou
 	return returnTransactions(out, len(transactions), func(i int) C.FioTransaction {
 		return transactionToC(transactions[i])
 	})
+}
+
+// FioGetAccountInfo returns metadata and balances for the client's account.
+// The caller owns the returned value and must release it with
+// FioFreeAccountInfo.
+//
+//export FioGetAccountInfo
+func FioGetAccountInfo(client C.ClientHandle, ctx C.ContextHandle, out *C.FioAccountInfo) C.FioResult {
+	if out == nil {
+		setLastError(nullPointerError("out"))
+		return C.FioFailure
+	}
+	*out = C.FioAccountInfo{}
+
+	clientGo, ctxGo, err := getCommonHandles(client, ctx)
+	if err != nil {
+		setLastError(err)
+		return C.FioFailure
+	}
+	info, err := clientGo.GetAccountInfo(ctxGo)
+	if err != nil {
+		setLastError(err)
+		return C.FioFailure
+	}
+
+	*out = accountInfoToC(info)
+	clearLastError()
+	return C.FioSuccess
+}
+
+// FioFreeAccountInfo releases all memory owned by accountInfo. Passing NULL is
+// safe.
+//
+//export FioFreeAccountInfo
+func FioFreeAccountInfo(accountInfo *C.FioAccountInfo) {
+	if accountInfo == nil {
+		return
+	}
+	for _, ptr := range []*C.char{accountInfo.account_id, accountInfo.bank_id, accountInfo.currency,
+		accountInfo.iban, accountInfo.bic, accountInfo.opening_balance, accountInfo.closing_balance,
+		accountInfo.date_start, accountInfo.date_end} {
+		C.free(unsafe.Pointer(ptr))
+	}
+	for _, ptr := range []unsafe.Pointer{unsafe.Pointer(accountInfo.year_list), unsafe.Pointer(accountInfo.id_list),
+		unsafe.Pointer(accountInfo.id_from), unsafe.Pointer(accountInfo.id_to), unsafe.Pointer(accountInfo.id_last_download)} {
+		C.free(ptr)
+	}
+	*accountInfo = C.FioAccountInfo{}
 }
 
 // FioFreeTransactions releases a transaction collection and all strings and

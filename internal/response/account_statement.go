@@ -5,6 +5,8 @@ import (
 	"go.chrastecky.dev/fio-api/fio/types"
 )
 
+// AccountInfo contains the account metadata and balance information returned
+// with an account statement.
 type AccountInfo struct {
 	AccountID      string              `json:"accountId"`
 	BankID         string              `json:"bankId"`

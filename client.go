@@ -15,6 +15,7 @@ import (
 	"github.com/samber/lo"
 	"go.chrastecky.dev/fio-api/fio/dto"
 	. "go.chrastecky.dev/fio-api/fio/internal/helper"
+	"go.chrastecky.dev/fio-api/fio/internal/response"
 )
 
 // Client provides access to the supported Fio bank API operations.
@@ -28,6 +29,9 @@ type Client interface {
 	// TransactionsSinceLastPull returns transactions added since the token's
 	// last successful download.
 	TransactionsSinceLastPull(ctx context.Context) ([]dto.Transaction, error)
+	// GetAccountInfo returns metadata and balances for the account associated
+	// with the client's API token.
+	GetAccountInfo(ctx context.Context) (response.AccountInfo, error)
 
 	// SetLastTransactionID sets the transaction from which the next
 	// TransactionsSinceLastPull request continues.
