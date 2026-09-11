@@ -6,49 +6,49 @@ import (
 )
 
 const (
-	typeIncomingInsideBank               = "Příjem převodem uvnitř banky"
-	typeOutgoingInsideBank               = "Platba převodem uvnitř banky"
-	typeCashDepositAtCounter             = "Vklad pokladnou"
-	typeCashWithdrawalAtCounter          = "Výběr pokladnou"
-	typeCashDeposit                      = "Vklad v hotovosti"
-	typeCashWithdrawal                   = "Výběr v hotovosti"
-	typePayment                          = "Platba"
-	typeIncoming                         = "Příjem"
-	typeCashlessPayment                  = "Bezhotovostní platba"
-	typeCashlessIncoming                 = "Bezhotovostní příjem"
-	typeCardPayment                      = "Platba kartou"
-	typeLoanInterest                     = "Úrok z úvěru"
-	typePenaltyFee                       = "Sankční poplatek"
-	typeCourierOutgoing                  = "Posel – předání"
-	typeCourierIncoming                  = "Posel – příjem"
-	typeTransferInsideAccount            = "Převod uvnitř konta"
-	typeInterestCredited                 = "Připsaný úrok"
-	typeInterestPaid                     = "Vyplacený úrok"
-	typeInterestTax                      = "Odvod daně z úroků"
-	typeRecordedInterest                 = "Evidovaný úrok"
-	typeFee                              = "Poplatek"
-	typeRecordedFee                      = "Evidovaný poplatek"
-	typeInterBankAccountTransferOutgoing = "Převod mezi bankovními konty (platba)"
-	typeInterBankAccountTransferIncoming = "Převod mezi bankovními konty (příjem)"
-	typeUnidentifiedBankAccountPayment   = "Neidentifikovaná platba z bankovního konta"
-	typeUnidentifiedBankAccountIncoming  = "Neidentifikovaný příjem na bankovní konto"
-	typeOwnBankAccountPayment            = "Vlastní platba z bankovního konta"
-	typeOwnBankAccountIncoming           = "Vlastní příjem na bankovní konto"
-	typeOwnCounterPayment                = "Vlastní platba pokladnou"
-	typeOwnCounterIncoming               = "Vlastní příjem pokladnou"
-	typeCorrection                       = "Opravný pohyb"
-	typeFeeReceived                      = "Přijatý poplatek"
-	typeForeignCurrencyPayment           = "Platba v jiné měně"
-	typeCardFee                          = "Poplatek – platební karta"
-	typeDirectDebit                      = "Inkaso"
-	typeDirectDebitIncoming              = "Inkaso ve prospěch účtu"
-	typeDirectDebitOutgoing              = "Inkaso z účtu"
-	typeDirectDebitIncomingOtherBank     = "Příjem inkasa z cizí banky"
-	typeInstantIncoming                  = "Okamžitá příchozí platba"
-	typeInstantOutgoing                  = "Okamžitá odchozí platba"
-	typeMortgageInsuranceFee             = "Poplatek - pojištění hypotéky"
-	typeInstantEuroIncoming              = "Okamžitá příchozí Europlatba"
-	typeInstantEuroOutgoing              = "Okamžitá odchozí Europlatba"
+	TypeIncomingInsideBank               = "Příjem převodem uvnitř banky"
+	TypeOutgoingInsideBank               = "Platba převodem uvnitř banky"
+	TypeCashDepositAtCounter             = "Vklad pokladnou"
+	TypeCashWithdrawalAtCounter          = "Výběr pokladnou"
+	TypeCashDeposit                      = "Vklad v hotovosti"
+	TypeCashWithdrawal                   = "Výběr v hotovosti"
+	TypePayment                          = "Platba"
+	TypeIncoming                         = "Příjem"
+	TypeCashlessPayment                  = "Bezhotovostní platba"
+	TypeCashlessIncoming                 = "Bezhotovostní příjem"
+	TypeCardPayment                      = "Platba kartou"
+	TypeLoanInterest                     = "Úrok z úvěru"
+	TypePenaltyFee                       = "Sankční poplatek"
+	TypeCourierOutgoing                  = "Posel – předání"
+	TypeCourierIncoming                  = "Posel – příjem"
+	TypeTransferInsideAccount            = "Převod uvnitř konta"
+	TypeInterestCredited                 = "Připsaný úrok"
+	TypeInterestPaid                     = "Vyplacený úrok"
+	TypeInterestTax                      = "Odvod daně z úroků"
+	TypeRecordedInterest                 = "Evidovaný úrok"
+	TypeFee                              = "Poplatek"
+	TypeRecordedFee                      = "Evidovaný poplatek"
+	TypeInterBankAccountTransferOutgoing = "Převod mezi bankovními konty (platba)"
+	TypeInterBankAccountTransferIncoming = "Převod mezi bankovními konty (příjem)"
+	TypeUnidentifiedBankAccountPayment   = "Neidentifikovaná platba z bankovního konta"
+	TypeUnidentifiedBankAccountIncoming  = "Neidentifikovaný příjem na bankovní konto"
+	TypeOwnBankAccountPayment            = "Vlastní platba z bankovního konta"
+	TypeOwnBankAccountIncoming           = "Vlastní příjem na bankovní konto"
+	TypeOwnCounterPayment                = "Vlastní platba pokladnou"
+	TypeOwnCounterIncoming               = "Vlastní příjem pokladnou"
+	TypeCorrection                       = "Opravný pohyb"
+	TypeFeeReceived                      = "Přijatý poplatek"
+	TypeForeignCurrencyPayment           = "Platba v jiné měně"
+	TypeCardFee                          = "Poplatek – platební karta"
+	TypeDirectDebit                      = "Inkaso"
+	TypeDirectDebitIncoming              = "Inkaso ve prospěch účtu"
+	TypeDirectDebitOutgoing              = "Inkaso z účtu"
+	TypeDirectDebitIncomingOtherBank     = "Příjem inkasa z cizí banky"
+	TypeInstantIncoming                  = "Okamžitá příchozí platba"
+	TypeInstantOutgoing                  = "Okamžitá odchozí platba"
+	TypeMortgageInsuranceFee             = "Poplatek - pojištění hypotéky"
+	TypeInstantEuroIncoming              = "Okamžitá příchozí Europlatba"
+	TypeInstantEuroOutgoing              = "Okamžitá odchozí Europlatba"
 )
 
 // TransactionType is the localized transaction category reported by Fio
@@ -74,13 +74,13 @@ func (receiver TransactionType) String() string {
 	return receiver.innerType
 }
 
-// Value implements [driver.Valuer] by returning the transaction type's
+// Value implements [driver.Valuer] by returning the transaction Type's
 // original string representation.
 func (receiver TransactionType) Value() (driver.Value, error) {
 	return receiver.String(), nil
 }
 
-// Scan implements database/sql.Scanner for transaction type strings.
+// Scan implements database/sql.Scanner for transaction Type strings.
 func (receiver *TransactionType) Scan(src any) error {
 	if str, ok := src.(string); ok {
 		return receiver.UnmarshalText([]byte(str))
@@ -89,208 +89,208 @@ func (receiver *TransactionType) Scan(src any) error {
 	return fmt.Errorf("the value must be a string, %T given", src)
 }
 
-// IsIncoming reports whether the type represents incoming funds.
+// IsIncoming reports whether the Type represents incoming funds.
 func (receiver TransactionType) IsIncoming() bool {
 	switch receiver.innerType {
 	case
-		typeIncomingInsideBank,
-		typeIncoming,
-		typeCashlessIncoming,
-		typeCourierIncoming,
-		typeInterBankAccountTransferIncoming,
-		typeUnidentifiedBankAccountIncoming,
-		typeOwnBankAccountIncoming,
-		typeOwnCounterIncoming,
-		typeFeeReceived,
-		typeDirectDebitIncoming,
-		typeDirectDebitIncomingOtherBank,
-		typeInstantIncoming,
-		typeInstantEuroIncoming:
+		TypeIncomingInsideBank,
+		TypeIncoming,
+		TypeCashlessIncoming,
+		TypeCourierIncoming,
+		TypeInterBankAccountTransferIncoming,
+		TypeUnidentifiedBankAccountIncoming,
+		TypeOwnBankAccountIncoming,
+		TypeOwnCounterIncoming,
+		TypeFeeReceived,
+		TypeDirectDebitIncoming,
+		TypeDirectDebitIncomingOtherBank,
+		TypeInstantIncoming,
+		TypeInstantEuroIncoming:
 		return true
 	default:
 		return false
 	}
 }
 
-// IsOutgoing reports whether the type represents outgoing funds.
+// IsOutgoing reports whether the Type represents outgoing funds.
 func (receiver TransactionType) IsOutgoing() bool {
 	switch receiver.innerType {
 	case
-		typeOutgoingInsideBank,
-		typeCashWithdrawalAtCounter,
-		typeCashWithdrawal,
-		typePayment,
-		typeCashlessPayment,
-		typeCardPayment,
-		typeLoanInterest,
-		typePenaltyFee,
-		typeCourierOutgoing,
-		typeInterBankAccountTransferOutgoing,
-		typeUnidentifiedBankAccountPayment,
-		typeOwnBankAccountPayment,
-		typeOwnCounterPayment,
-		typeFee,
-		typeCardFee,
-		typeDirectDebitOutgoing,
-		typeMortgageInsuranceFee,
-		typeForeignCurrencyPayment,
-		typeInstantOutgoing,
-		typeInstantEuroOutgoing:
+		TypeOutgoingInsideBank,
+		TypeCashWithdrawalAtCounter,
+		TypeCashWithdrawal,
+		TypePayment,
+		TypeCashlessPayment,
+		TypeCardPayment,
+		TypeLoanInterest,
+		TypePenaltyFee,
+		TypeCourierOutgoing,
+		TypeInterBankAccountTransferOutgoing,
+		TypeUnidentifiedBankAccountPayment,
+		TypeOwnBankAccountPayment,
+		TypeOwnCounterPayment,
+		TypeFee,
+		TypeCardFee,
+		TypeDirectDebitOutgoing,
+		TypeMortgageInsuranceFee,
+		TypeForeignCurrencyPayment,
+		TypeInstantOutgoing,
+		TypeInstantEuroOutgoing:
 		return true
 	default:
 		return false
 	}
 }
 
-// IsImmediate reports whether the type represents an instant payment.
+// IsImmediate reports whether the Type represents an instant payment.
 func (receiver TransactionType) IsImmediate() bool {
 	switch receiver.innerType {
 	case
-		typeInstantIncoming,
-		typeInstantOutgoing,
-		typeInstantEuroIncoming,
-		typeInstantEuroOutgoing:
+		TypeInstantIncoming,
+		TypeInstantOutgoing,
+		TypeInstantEuroIncoming,
+		TypeInstantEuroOutgoing:
 		return true
 	default:
 		return false
 	}
 }
 
-// IsInternal reports whether the type represents a transfer within Fio bank
+// IsInternal reports whether the Type represents a transfer within Fio bank
 // or between the account owner's accounts.
 func (receiver TransactionType) IsInternal() bool {
 	switch receiver.innerType {
 	case
-		typeIncomingInsideBank,
-		typeOutgoingInsideBank,
-		typeTransferInsideAccount,
-		typeOwnBankAccountPayment,
-		typeOwnBankAccountIncoming:
+		TypeIncomingInsideBank,
+		TypeOutgoingInsideBank,
+		TypeTransferInsideAccount,
+		TypeOwnBankAccountPayment,
+		TypeOwnBankAccountIncoming:
 		return true
 	default:
 		return false
 	}
 }
 
-// IsCardPayment reports whether the type represents a card payment.
+// IsCardPayment reports whether the Type represents a card payment.
 func (receiver TransactionType) IsCardPayment() bool {
-	return receiver.innerType == typeCardPayment
+	return receiver.innerType == TypeCardPayment
 }
 
-// IsCash reports whether the type represents a cash transaction.
+// IsCash reports whether the Type represents a cash transaction.
 func (receiver TransactionType) IsCash() bool {
 	switch receiver.innerType {
 	case
-		typeCashDepositAtCounter,
-		typeCashWithdrawalAtCounter,
-		typeCashDeposit,
-		typeCashWithdrawal,
-		typeOwnCounterPayment,
-		typeOwnCounterIncoming:
+		TypeCashDepositAtCounter,
+		TypeCashWithdrawalAtCounter,
+		TypeCashDeposit,
+		TypeCashWithdrawal,
+		TypeOwnCounterPayment,
+		TypeOwnCounterIncoming:
 		return true
 	default:
 		return false
 	}
 }
 
-// IsDirectDebit reports whether the type represents a direct debit.
+// IsDirectDebit reports whether the Type represents a direct debit.
 func (receiver TransactionType) IsDirectDebit() bool {
 	switch receiver.innerType {
 	case
-		typeDirectDebit,
-		typeDirectDebitIncoming,
-		typeDirectDebitOutgoing,
-		typeDirectDebitIncomingOtherBank:
+		TypeDirectDebit,
+		TypeDirectDebitIncoming,
+		TypeDirectDebitOutgoing,
+		TypeDirectDebitIncomingOtherBank:
 		return true
 	default:
 		return false
 	}
 }
 
-// IsFee reports whether the type represents a fee.
+// IsFee reports whether the Type represents a fee.
 func (receiver TransactionType) IsFee() bool {
 	switch receiver.innerType {
 	case
-		typePenaltyFee,
-		typeFee,
-		typeRecordedFee,
-		typeFeeReceived,
-		typeCardFee,
-		typeMortgageInsuranceFee:
+		TypePenaltyFee,
+		TypeFee,
+		TypeRecordedFee,
+		TypeFeeReceived,
+		TypeCardFee,
+		TypeMortgageInsuranceFee:
 		return true
 	default:
 		return false
 	}
 }
 
-// IsInterest reports whether the type represents interest or interest tax.
+// IsInterest reports whether the Type represents interest or interest tax.
 func (receiver TransactionType) IsInterest() bool {
 	switch receiver.innerType {
 	case
-		typeLoanInterest,
-		typeInterestCredited,
-		typeInterestPaid,
-		typeInterestTax,
-		typeRecordedInterest:
+		TypeLoanInterest,
+		TypeInterestCredited,
+		TypeInterestPaid,
+		TypeInterestTax,
+		TypeRecordedInterest:
 		return true
 	default:
 		return false
 	}
 }
 
-// IsCorrection reports whether the type represents a corrective entry.
+// IsCorrection reports whether the Type represents a corrective entry.
 func (receiver TransactionType) IsCorrection() bool {
-	return receiver.innerType == typeCorrection
+	return receiver.innerType == TypeCorrection
 }
 
-// IsKnown reports whether the type is recognized by this version of the
+// IsKnown reports whether the Type is recognized by this version of the
 // package.
 func (receiver TransactionType) IsKnown() bool {
 	switch receiver.innerType {
 	case
-		typeIncomingInsideBank,
-		typeOutgoingInsideBank,
-		typeCashDepositAtCounter,
-		typeCashWithdrawalAtCounter,
-		typeCashDeposit,
-		typeCashWithdrawal,
-		typePayment,
-		typeIncoming,
-		typeCashlessPayment,
-		typeCashlessIncoming,
-		typeCardPayment,
-		typeLoanInterest,
-		typePenaltyFee,
-		typeCourierOutgoing,
-		typeCourierIncoming,
-		typeTransferInsideAccount,
-		typeInterestCredited,
-		typeInterestPaid,
-		typeInterestTax,
-		typeRecordedInterest,
-		typeFee,
-		typeRecordedFee,
-		typeInterBankAccountTransferOutgoing,
-		typeInterBankAccountTransferIncoming,
-		typeUnidentifiedBankAccountPayment,
-		typeUnidentifiedBankAccountIncoming,
-		typeOwnBankAccountPayment,
-		typeOwnBankAccountIncoming,
-		typeOwnCounterPayment,
-		typeOwnCounterIncoming,
-		typeCorrection,
-		typeFeeReceived,
-		typeForeignCurrencyPayment,
-		typeCardFee,
-		typeDirectDebit,
-		typeDirectDebitIncoming,
-		typeDirectDebitOutgoing,
-		typeDirectDebitIncomingOtherBank,
-		typeInstantIncoming,
-		typeInstantOutgoing,
-		typeMortgageInsuranceFee,
-		typeInstantEuroIncoming,
-		typeInstantEuroOutgoing:
+		TypeIncomingInsideBank,
+		TypeOutgoingInsideBank,
+		TypeCashDepositAtCounter,
+		TypeCashWithdrawalAtCounter,
+		TypeCashDeposit,
+		TypeCashWithdrawal,
+		TypePayment,
+		TypeIncoming,
+		TypeCashlessPayment,
+		TypeCashlessIncoming,
+		TypeCardPayment,
+		TypeLoanInterest,
+		TypePenaltyFee,
+		TypeCourierOutgoing,
+		TypeCourierIncoming,
+		TypeTransferInsideAccount,
+		TypeInterestCredited,
+		TypeInterestPaid,
+		TypeInterestTax,
+		TypeRecordedInterest,
+		TypeFee,
+		TypeRecordedFee,
+		TypeInterBankAccountTransferOutgoing,
+		TypeInterBankAccountTransferIncoming,
+		TypeUnidentifiedBankAccountPayment,
+		TypeUnidentifiedBankAccountIncoming,
+		TypeOwnBankAccountPayment,
+		TypeOwnBankAccountIncoming,
+		TypeOwnCounterPayment,
+		TypeOwnCounterIncoming,
+		TypeCorrection,
+		TypeFeeReceived,
+		TypeForeignCurrencyPayment,
+		TypeCardFee,
+		TypeDirectDebit,
+		TypeDirectDebitIncoming,
+		TypeDirectDebitOutgoing,
+		TypeDirectDebitIncomingOtherBank,
+		TypeInstantIncoming,
+		TypeInstantOutgoing,
+		TypeMortgageInsuranceFee,
+		TypeInstantEuroIncoming,
+		TypeInstantEuroOutgoing:
 		return true
 	default:
 		return false
