@@ -57,6 +57,12 @@ type TransactionType struct {
 	innerType string
 }
 
+func NewTransactionType(raw string) TransactionType {
+	return TransactionType{
+		innerType: raw,
+	}
+}
+
 // MarshalText implements encoding.TextMarshaler.
 func (receiver TransactionType) MarshalText() ([]byte, error) {
 	return []byte(receiver.innerType), nil
